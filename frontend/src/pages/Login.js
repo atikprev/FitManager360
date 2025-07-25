@@ -10,14 +10,25 @@ import {
   Alert,
   CircularProgress,
   Divider,
-  Grid
+  Grid,
+  InputAdornment,
+  IconButton,
 } from '@mui/material';
-import { Login as LoginIcon, PersonAdd, FitnessCenter } from '@mui/icons-material';
+import { 
+  Login as LoginIcon, 
+  PersonAdd, 
+  FitnessCenter,
+  Email,
+  Lock,
+  Visibility,
+  VisibilityOff,
+} from '@mui/icons-material';
 import { useAuth } from '../contexts/AuthContext';
 
 const Login = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -38,7 +49,6 @@ const Login = () => {
     setLoading(true);
 
     try {
-      // Clear any existing data before login
       localStorage.clear();
       
       const result = await login(formData.email, formData.password);
@@ -56,33 +66,65 @@ const Login = () => {
   };
 
   return (
-    <Container component="main" maxWidth="xs">
-      <Box
-        sx={{
-          marginTop: 8,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-        }}
-      >
-        <Paper elevation={3} sx={{ padding: 4, width: '100%' }}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <FitnessCenter sx={{ fontSize: 40, color: 'primary.main', mb: 2 }} />
-            <Typography component="h1" variant="h4" gutterBottom>
+    <Box
+      sx={{
+        minHeight: '100vh',
+        backgroundColor: 'background.default',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        py: 4,
+      }}
+    >
+      <Container component="main" maxWidth="sm">
+        <Paper
+          elevation={0}
+          sx={{
+            p: 6,
+            border: '1px solid #e0e0e0',
+            borderRadius: 3,
+            backgroundColor: 'white',
+          }}
+        >
+          {/* Header */}
+          <Box sx={{ textAlign: 'center', mb: 4 }}>
+            <Box
+              sx={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: 64,
+                height: 64,
+                borderRadius: '50%',
+                backgroundColor: 'primary.main',
+                mb: 2,
+              }}
+            >
+              <FitnessCenter sx={{ fontSize: 32, color: 'white' }} />
+            </Box>
+            <Typography
+              variant="h3"
+              sx={{
+                fontWeight: 700,
+                color: 'primary.main',
+                mb: 1,
+              }}
+            >
               FitManager360
             </Typography>
-            <Typography component="h2" variant="h6" color="text.secondary" gutterBottom>
-              Iniciar Sesión
+            <Typography variant="h6" color="text.secondary">
+              Inicia sesión en tu cuenta
             </Typography>
           </Box>
-
+          {/* Error Alert */}
           {error && (
-            <Alert severity="error" sx={{ mb: 2 }}>
+            <Alert severity="error" sx={{ mb: 3 }}>
               {error}
             </Alert>
           )}
 
-          <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
+          {/* Login Form */}
+          <Box component="form" onSubmit={handleSubmit}>
             <TextField
               margin="normal"
               required
@@ -95,76 +137,129 @@ const Login = () => {
               value={formData.email}
               onChange={handleChange}
               disabled={loading}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Email color="action" />
+                  </InputAdornment>
+                ),
+              }}
+              sx={{ mb: 2 }}
             />
+            
             <TextField
               margin="normal"
               required
               fullWidth
               name="password"
               label="Contraseña"
-              type="password"
+              type={showPassword ? 'text' : 'password'}
               id="password"
               autoComplete="current-password"
               value={formData.password}
               onChange={handleChange}
               disabled={loading}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Lock color="action" />
+                  </InputAdornment>
+                ),
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={() => setShowPassword(!showPassword)}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+              sx={{ mb: 3 }}
             />
             
             <Button
               type="submit"
               fullWidth
               variant="contained"
-              sx={{ mt: 3, mb: 2 }}
+              size="large"
               disabled={loading}
-              startIcon={loading ? <CircularProgress size={20} /> : <LoginIcon />}
+              startIcon={loading ? <CircularProgress size={20} color="inherit" /> : <LoginIcon />}
+              sx={{ 
+                mb: 3,
+                py: 1.5,
+                fontSize: '1.1rem',
+                fontWeight: 600,
+              }}
             >
               {loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
             </Button>
 
-            <Grid container>
-              <Grid item xs>
+            {/* Links */}
+            <Grid container spacing={2} sx={{ mb: 3 }}>
+              <Grid item xs={12} sm={6}>
                 <Link to="/forgot-password" style={{ textDecoration: 'none' }}>
-                  <Typography variant="body2" color="primary">
+                  <Typography
+                    variant="body2"
+                    color="primary"
+                    sx={{
+                      '&:hover': {
+                        textDecoration: 'underline',
+                      },
+                    }}
+                  >
                     ¿Olvidaste tu contraseña?
                   </Typography>
                 </Link>
               </Grid>
-              <Grid item>
+              <Grid item xs={12} sm={6} sx={{ textAlign: { sm: 'right' } }}>
                 <Link to="/register" style={{ textDecoration: 'none' }}>
-                  <Typography variant="body2" color="primary">
-                    ¿No tienes cuenta? Regístrate
+                  <Typography
+                    variant="body2"
+                    color="primary"
+                    sx={{
+                      '&:hover': {
+                        textDecoration: 'underline',
+                      },
+                    }}
+                  >
+                    ¿No tienes cuenta?
                   </Typography>
                 </Link>
               </Grid>
             </Grid>
 
-            <Divider sx={{ my: 3 }} />
+            <Divider sx={{ mb: 3 }} />
 
+            {/* Register Button */}
             <Box sx={{ textAlign: 'center' }}>
-              <Typography variant="body2" color="text.secondary" gutterBottom>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
                 ¿Nuevo en FitManager360?
               </Typography>
               <Button
                 variant="outlined"
                 fullWidth
+                size="large"
                 component={Link}
                 to="/register"
                 startIcon={<PersonAdd />}
-                sx={{ mt: 1 }}
+                sx={{ py: 1.5 }}
               >
-                Crear Cuenta
+                Crear Cuenta Nueva
               </Button>
             </Box>
           </Box>
         </Paper>
 
-        <Box sx={{ mt: 4, textAlign: 'center' }}>
+        {/* Footer */}
+        <Box sx={{ mt: 3, textAlign: 'center' }}>
           <Typography variant="body2" color="text.secondary">
             © 2025 FitManager360. Todos los derechos reservados.
           </Typography>
         </Box>
-      </Box>
-    </Container>
+      </Container>
+    </Box>
   );
 };
 

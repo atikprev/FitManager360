@@ -13,18 +13,14 @@ import {
   Divider,
   Badge,
   Tooltip,
-  useTheme,
-  alpha,
+  Container,
 } from '@mui/material';
-import {
   Menu as MenuIcon,
   Dashboard,
   FitnessCenter,
   Chat,
   Person,
-  Logout,
   Settings,
-  NotificationsNone,
   Home,
 } from '@mui/icons-material';
 import { useAuth } from '../contexts/AuthContext';
@@ -32,7 +28,6 @@ import { useSocket } from '../contexts/SocketContext';
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const location = useLocation();
   const theme = useTheme();
   const { user, logout } = useAuth();
   const { connected, onlineUsers } = useSocket();
@@ -79,66 +74,45 @@ const Navbar = () => {
     <AppBar 
       position="static" 
       sx={{ 
-        mb: 2,
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-        boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+        backgroundColor: 'white',
+        borderBottom: '1px solid #e0e0e0',
+        color: 'text.primary',
       }}
     >
-      <Toolbar sx={{ minHeight: 70 }}>
-        <IconButton
-          size="large"
-          edge="start"
-          color="inherit"
-          aria-label="menu"
-          sx={{ 
-            mr: 2,
-            '&:hover': {
-              backgroundColor: alpha(theme.palette.common.white, 0.1),
-            }
-          }}
-        >
-          <MenuIcon />
-        </IconButton>
-        
-        <Box sx={{ display: 'flex', alignItems: 'center', mr: 4 }}>
-          <FitnessCenter sx={{ mr: 1, fontSize: 28 }} />
-          <Typography 
-            variant="h5" 
-            component="div" 
-            sx={{ 
-              fontWeight: 700,
-              background: 'linear-gradient(45deg, #ffffff, #f0f0f0)',
-              backgroundClip: 'text',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-            }}
-          >
-            FitManager360
-          </Typography>
-        </Box>
+      <Container maxWidth="xl">
+        <Toolbar sx={{ minHeight: 64, px: 0 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', mr: 4 }}>
+            <FitnessCenter sx={{ mr: 1, fontSize: 28, color: 'primary.main' }} />
+            <Typography 
+              variant="h5" 
+              component="div" 
+              sx={{ 
+                fontWeight: 700,
+                color: 'primary.main',
+                cursor: 'pointer',
+              }}
+              onClick={() => navigate('/')}
+            >
+              FitManager360
+            </Typography>
+          </Box>
 
-        <Box sx={{ flexGrow: 1, display: 'flex', gap: 1 }}>
-          {navItems.map((item) => (
-            <Tooltip key={item.key} title={item.label} arrow>
+          <Box sx={{ flexGrow: 1, display: 'flex', gap: 1 }}>
+            {navItems.map((item) => (
               <Button
-                color="inherit"
+                key={item.key}
                 startIcon={item.icon}
                 onClick={() => handleNavigate(item.path)}
+                variant={isActive(item.path) ? 'contained' : 'text'}
                 sx={{
                   px: 3,
                   py: 1,
                   borderRadius: 2,
                   fontWeight: 600,
-                  backgroundColor: isActive(item.path) 
-                    ? alpha(theme.palette.common.white, 0.2)
-                    : 'transparent',
-                  border: isActive(item.path) 
-                    ? `2px solid ${alpha(theme.palette.common.white, 0.3)}`
-                    : '2px solid transparent',
-                  transition: 'all 0.2s ease-in-out',
+                  color: isActive(item.path) ? 'white' : 'text.primary',
+                  backgroundColor: isActive(item.path) ? 'primary.main' : 'transparent',
                   '&:hover': {
-                    backgroundColor: alpha(theme.palette.common.white, 0.15),
-                    transform: 'translateY(-2px)',
+                    backgroundColor: isActive(item.path) ? 'primary.dark' : 'grey.100',
                   },
                   display: { xs: 'none', sm: 'flex' }
                 }}
@@ -162,138 +136,105 @@ const Navbar = () => {
                   item.label
                 )}
               </Button>
-            </Tooltip>
-          ))}
-        </Box>
+            ))}
+          </Box>
 
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Tooltip title="Notificaciones" arrow>
-            <IconButton 
-              color="inherit" 
-              sx={{ 
-                '&:hover': {
-                  backgroundColor: alpha(theme.palette.common.white, 0.1),
-                }
-              }}
-            >
-              <Badge badgeContent={0} color="error">
-                <NotificationsNone />
-              </Badge>
-            </IconButton>
-          </Tooltip>
-
-          <Tooltip title="Perfil de usuario" arrow>
-            <IconButton
-              size="large"
-              onClick={handleMenu}
-              color="inherit"
-              sx={{
-                ml: 1,
-                '&:hover': {
-                  backgroundColor: alpha(theme.palette.common.white, 0.1),
-                }
-              }}
-            >
-              <Avatar
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Tooltip title="Notificaciones" arrow>
+              <IconButton 
                 sx={{ 
-                  width: 40, 
-                  height: 40,
-                  border: '2px solid rgba(255,255,255,0.3)',
-                  transition: 'all 0.2s ease-in-out',
+                  color: 'text.primary',
                   '&:hover': {
-                    border: '2px solid rgba(255,255,255,0.6)',
-                    transform: 'scale(1.05)',
+                    backgroundColor: 'grey.100',
                   }
                 }}
-                src={user?.profile?.avatar}
               >
-                {user?.username?.charAt(0).toUpperCase()}
-              </Avatar>
-            </IconButton>
-          </Tooltip>
-          
-          <Menu
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={handleClose}
-            transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-            anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-            PaperProps={{
-              sx: {
-                mt: 1,
-                minWidth: 200,
-                borderRadius: 2,
-                boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
-                '& .MuiMenuItem-root': {
-                  px: 2,
-                  py: 1.5,
-                  borderRadius: 1,
-                  mx: 1,
-                  my: 0.5,
+                <Badge badgeContent={0} color="error">
+                  <NotificationsNone />
+                </Badge>
+              </IconButton>
+            </Tooltip>
+
+            <Tooltip title="Perfil de usuario" arrow>
+              <IconButton
+                size="large"
+                onClick={handleMenu}
+                sx={{
+                  ml: 1,
                   '&:hover': {
-                    backgroundColor: alpha(theme.palette.primary.main, 0.08),
+                    backgroundColor: 'grey.100',
                   }
-                }
-              }
-            }}
-          >
-            <Box sx={{ px: 2, py: 1.5, borderBottom: 1, borderColor: 'divider' }}>
-              <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-                {user?.username}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                {user?.email}
-              </Typography>
-            </Box>
+                }}
+              >
+                <Avatar
+                  sx={{ 
+                    width: 36, 
+                    height: 36,
+                    backgroundColor: 'primary.main',
+                    fontSize: '1rem',
+                    fontWeight: 600,
+                  }}
+                  src={user?.profile?.avatar}
+                >
+                  {user?.username?.charAt(0).toUpperCase()}
+                </Avatar>
+              </IconButton>
+            </Tooltip>
             
-            <MenuItem onClick={() => handleNavigate('/profile')}>
-              <Person sx={{ mr: 2, color: 'primary.main' }} />
-              <Box>
+            <Menu
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl)}
+              onClose={handleClose}
+              transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+              anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+              PaperProps={{
+                sx: {
+                  mt: 1,
+                  minWidth: 200,
+                  borderRadius: 2,
+                  boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
+                  border: '1px solid #e0e0e0',
+                }
+              }}
+            >
+              <Box sx={{ px: 3, py: 2, borderBottom: 1, borderColor: 'divider' }}>
+                <Typography variant="subtitle1" sx={{ fontWeight: 600, color: 'text.primary' }}>
+                  {user?.username}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {user?.email}
+                </Typography>
+              </Box>
+              
+              <MenuItem onClick={() => handleNavigate('/profile')} sx={{ px: 3, py: 1.5 }}>
+                <Person sx={{ mr: 2, color: 'primary.main' }} />
                 <Typography variant="body2" sx={{ fontWeight: 500 }}>
                   Mi Perfil
                 </Typography>
-                <Typography variant="caption" color="text.secondary">
-                  Gestionar información personal
-                </Typography>
-              </Box>
-            </MenuItem>
-            
-            <MenuItem onClick={() => handleNavigate('/settings')}>
-              <Settings sx={{ mr: 2, color: 'warning.main' }} />
-              <Box>
-                <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                  Configuración
-                </Typography>
-                <Typography variant="caption" color="text.secondary">
-                  Preferencias de la aplicación
-                </Typography>
-              </Box>
-            </MenuItem>
-            
-            <Divider sx={{ my: 1 }} />
-            
-            <MenuItem 
-              onClick={handleLogout}
-              sx={{
-                color: 'error.main',
-                '&:hover': {
-                  backgroundColor: alpha(theme.palette.error.main, 0.08),
-                }
-              }}
-            >
-              <Logout sx={{ mr: 2 }} />
-              <Box>
+              </MenuItem>
+              
+              <Divider />
+              
+              <MenuItem 
+                onClick={handleLogout}
+                sx={{
+                  px: 3,
+                  py: 1.5,
+                  color: 'error.main',
+                  '&:hover': {
+                    backgroundColor: 'error.50',
+                  }
+                }}
+              >
+                <Logout sx={{ mr: 2 }} />
                 <Typography variant="body2" sx={{ fontWeight: 500 }}>
                   Cerrar Sesión
                 </Typography>
-                <Typography variant="caption" color="text.secondary">
-                  Salir de la aplicación
-                </Typography>
-              </Box>
-            </MenuItem>
-          </Menu>
-        </Box>
-      </Toolbar>
+              </MenuItem>
+            </Menu>
+          </Box>
+        </Toolbar>
+      </Container>
     </AppBar>
   );
 };

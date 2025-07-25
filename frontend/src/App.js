@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
+import { Box } from '@mui/material';
 import { AuthProvider } from './contexts/AuthContext';
 import { SocketProvider } from './contexts/SocketContext';
 import Navbar from './components/Navbar';
@@ -17,47 +18,70 @@ import './App.css';
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#667eea',
-      dark: '#5a67d8',
-      light: '#7c3aed',
+      main: '#1976d2',
+      dark: '#115293',
+      light: '#42a5f5',
     },
     secondary: {
-      main: '#764ba2',
-      dark: '#6b46c1',
-      light: '#a855f7',
+      main: '#dc004e',
+      dark: '#9a0036',
+      light: '#e33371',
     },
     background: {
-      default: '#f8fafc',
+      default: '#ffffff',
       paper: '#ffffff',
     },
     text: {
-      primary: '#1a202c',
-      secondary: '#4a5568',
+      primary: '#212121',
+      secondary: '#757575',
+    },
+    grey: {
+      50: '#fafafa',
+      100: '#f5f5f5',
+      200: '#eeeeee',
+      300: '#e0e0e0',
+      400: '#bdbdbd',
+      500: '#9e9e9e',
     },
   },
   typography: {
     fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
+    fontSize: 14,
     h1: {
       fontWeight: 700,
+      fontSize: '2.5rem',
     },
     h2: {
       fontWeight: 700,
+      fontSize: '2rem',
     },
     h3: {
       fontWeight: 700,
+      fontSize: '1.75rem',
     },
     h4: {
       fontWeight: 600,
+      fontSize: '1.5rem',
     },
     h5: {
       fontWeight: 600,
+      fontSize: '1.25rem',
     },
     h6: {
       fontWeight: 600,
+      fontSize: '1.1rem',
+    },
+    body1: {
+      fontSize: '1rem',
+      lineHeight: 1.6,
+    },
+    body2: {
+      fontSize: '0.875rem',
+      lineHeight: 1.5,
     },
   },
   shape: {
-    borderRadius: 12,
+    borderRadius: 8,
   },
   components: {
     MuiButton: {
@@ -65,23 +89,52 @@ const theme = createTheme({
         root: {
           textTransform: 'none',
           fontWeight: 600,
-          borderRadius: 8,
-          padding: '8px 24px',
+          borderRadius: 6,
+          padding: '10px 24px',
+          boxShadow: 'none',
+          '&:hover': {
+            boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+          },
         },
       },
     },
     MuiCard: {
       styleOverrides: {
         root: {
-          borderRadius: 12,
-          boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06)',
+          borderRadius: 8,
+          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+          border: '1px solid #f0f0f0',
+          '&:hover': {
+            boxShadow: '0 4px 16px rgba(0, 0, 0, 0.15)',
+          },
         },
       },
     },
     MuiPaper: {
       styleOverrides: {
         root: {
-          borderRadius: 12,
+          borderRadius: 8,
+          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+        },
+      },
+    },
+    MuiAppBar: {
+      styleOverrides: {
+        root: {
+          boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+          borderBottom: '1px solid #e0e0e0',
+        },
+      },
+    },
+    MuiTextField: {
+      styleOverrides: {
+        root: {
+          '& .MuiOutlinedInput-root': {
+            borderRadius: 6,
+            '&:hover .MuiOutlinedInput-notchedOutline': {
+              borderColor: '#1976d2',
+            },
+          },
         },
       },
     },
@@ -95,33 +148,40 @@ function App() {
       <AuthProvider>
         <SocketProvider>
           <Router>
-            <div className="App">
+            <Box sx={{ 
+              minHeight: '100vh', 
+              backgroundColor: 'background.default',
+              display: 'flex',
+              flexDirection: 'column'
+            }}>
               <Navbar />
-              <Routes>
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/" element={
-                  <ProtectedRoute>
-                    <Dashboard />
-                  </ProtectedRoute>
-                } />
-                <Route path="/routines" element={
-                  <ProtectedRoute>
-                    <Routines />
-                  </ProtectedRoute>
-                } />
-                <Route path="/chat" element={
-                  <ProtectedRoute>
-                    <Chat />
-                  </ProtectedRoute>
-                } />
-                <Route path="/profile" element={
-                  <ProtectedRoute>
-                    <Profile />
-                  </ProtectedRoute>
-                } />
-              </Routes>
-            </div>
+              <Box component="main" sx={{ flexGrow: 1, backgroundColor: 'background.default' }}>
+                <Routes>
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/register" element={<Register />} />
+                  <Route path="/" element={
+                    <ProtectedRoute>
+                      <Dashboard />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/routines" element={
+                    <ProtectedRoute>
+                      <Routines />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/chat" element={
+                    <ProtectedRoute>
+                      <Chat />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/profile" element={
+                    <ProtectedRoute>
+                      <Profile />
+                    </ProtectedRoute>
+                  } />
+                </Routes>
+              </Box>
+            </Box>
           </Router>
         </SocketProvider>
       </AuthProvider>
